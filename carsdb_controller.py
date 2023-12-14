@@ -9,10 +9,11 @@ def select_all(ses):
     all_data = ses.query(Car).all()
     return all_data
 
-# for eil_o in all_data:
-#     print(eil_o)
 
-# INSERT
-# row_o = Car("BMW", "x3", 5000, 2003)
-# session.add(row_o)
-# session.commit()
+def create_record(ses, make, model, price, year):
+    row_o = Car(make, model, price, year)
+    ses.add(row_o)
+    ses.commit()
+
+
+
