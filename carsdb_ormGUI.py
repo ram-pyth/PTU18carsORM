@@ -1,5 +1,5 @@
 import tkinter as tk
-from carsdb_controller import session, select_all, create_record
+from carsdb_controller import session, select_all, create_record, delete_record
 from tkinter import messagebox
 
 FONTS = ["Tenor Sans", "Consolas"]
@@ -15,6 +15,16 @@ def refresh_bxbox():
     global all_data
     all_data = select_all(session)
     fill_bxbox(all_data)
+
+
+def on_delete():
+    selection = bx_boxas.curselection()
+    if not selection:
+        messagebox.showerror("Nothing selected", "Please select row to delete")
+        return
+    index = selection[0]
+    delete_record(session, all_data[index])
+    refresh_bxbox()
 
 
 def clear_entry_fields():
@@ -59,7 +69,7 @@ l_year = tk.Label(fr_controls, text="year")
 e_year = tk.Entry(fr_controls)
 b_save = tk.Button(fr_controls, text="SAVE", command=save_record, width=10)
 b_edit = tk.Button(fr_controls, text="EDIT")
-b_delete = tk.Button(fr_controls, text="DELETE")
+b_delete = tk.Button(fr_controls, text="DELETE", command=on_delete)
 
 # bx_boxas.insert(tk.END, *select_all(c))
 refresh_bxbox()

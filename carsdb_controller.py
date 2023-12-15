@@ -16,4 +16,9 @@ def create_record(ses, make, model, price, year):
     ses.commit()
 
 
+def delete_record(ses, obj):
+    ses.delete(obj)
+    ses.commit()
+
+
 
