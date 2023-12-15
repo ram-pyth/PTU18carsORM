@@ -29,5 +29,9 @@ def edit_record(ses, obj, make, model, price, year):
     ses.commit()
 
 
-
-
+def filter_records(ses, search_text):
+    objs = ses.query(Car).filter(
+        (Car.car_make.ilike(search_text + "%")) |
+        (Car.car_model.ilike(search_text + "%"))
+    ).all()
+    return objs

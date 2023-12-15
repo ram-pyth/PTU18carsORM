@@ -1,21 +1,28 @@
 import tkinter as tk
-from carsdb_controller import session, select_all, create_record, delete_record, edit_record
+from carsdb_controller import session, select_all, create_record, delete_record, edit_record, filter_records
 from tkinter import messagebox
 
 FONTS = ["Tenor Sans", "Consolas"]
-all_data = []
+all_data = select_all(session)  # listas su visais objektais
 obj = None
-
-
-def fill_bxbox(data):
-    bx_boxas.delete(0, tk.END)
-    bx_boxas.insert(0, *data)
 
 
 def refresh_bxbox():
     global all_data
-    all_data = select_all(session)
-    fill_bxbox(all_data)
+    bx_boxas.delete(0, tk.END)
+    bx_boxas.insert(0, *all_data)
+
+
+def on_filter():
+    global all_data, filtered
+    filter_text = e_filter.get().strip()
+    if filter_text:
+        all_data = filter_records(session, filter_text)
+        l_filter["text"] = f"filtras: {filter_text}"
+    else:
+        all_data = select_all(session)
+        l_filter["text"] = "nefiltruota"
+    refresh_bxbox()
 
 
 def on_delete():
@@ -25,7 +32,7 @@ def on_delete():
         return
     index = selection[0]
     delete_record(session, all_data[index])
-    refresh_bxbox()
+    on_filter()
 
 
 def on_edit():
@@ -80,7 +87,7 @@ def save_record():
                       model=car_model,
                       price=e_car_price.get(),
                       year=e_year.get())
-    refresh_bxbox()
+    on_filter()
     clear_entry_fields()
 
 
@@ -107,6 +114,10 @@ e_year = tk.Entry(fr_controls)
 b_save = tk.Button(fr_controls, text="SAVE", command=save_record, width=10)
 b_edit = tk.Button(fr_controls, text="EDIT", command=on_edit)
 b_delete = tk.Button(fr_controls, text="DELETE", command=on_delete)
+l_filter = tk.Label(fr_controls, text="nefiltruota")
+e_filter = tk.Entry(fr_controls)
+
+e_filter.bind("<KeyRelease>", lambda e: on_filter())
 
 # bx_boxas.insert(tk.END, *select_all(c))
 refresh_bxbox()
@@ -123,6 +134,8 @@ e_year.grid(row=4, column=1, columnspan=2)
 b_save.grid(row=5, column=0, sticky=tk.W)
 b_edit.grid(row=5, column=1, sticky=tk.W + tk.E)
 b_delete.grid(row=5, column=2, sticky=tk.W + tk.E)
+l_filter.grid(row=6, columnspan=3, sticky=tk.W)
+e_filter.grid(row=7, columnspan=3, sticky=tk.W + tk.E)
 
 fr_controls.pack(side=tk.LEFT, anchor=tk.N)
 sc_scrollas.pack(side=tk.RIGHT, fill=tk.Y)
