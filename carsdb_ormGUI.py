@@ -44,6 +44,13 @@ def on_edit():
     b_delete["state"] = "disabled"
 
 
+def on_escape_edit():
+    global obj
+    obj = None
+    clear_entry_fields()
+    b_delete["state"] = "normal"
+
+
 def clear_entry_fields():
     e_car_make.delete(0, tk.END)
     e_car_model.delete(0, tk.END)
@@ -86,6 +93,7 @@ sc_scrollas = tk.Scrollbar(win)
 bx_boxas = tk.Listbox(win, yscrollcommand=sc_scrollas.set)
 sc_scrollas.config(command=bx_boxas.yview)
 bx_boxas.bind("<<ListboxSelect>>")
+win.bind("<Escape>", lambda e: on_escape_edit())
 
 l_search = tk.Label(fr_controls, text="cars")
 l_car_make = tk.Label(fr_controls, text="make")
