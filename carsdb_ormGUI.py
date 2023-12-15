@@ -2,6 +2,7 @@ import tkinter as tk
 from carsdb_controller import session, select_all, create_record
 
 FONTS = ["Tenor Sans", "Consolas"]
+all_data = []
 
 
 def fill_bxbox(data):
@@ -10,8 +11,16 @@ def fill_bxbox(data):
 
 
 def refresh_bxbox():
+    global all_data
     all_data = select_all(session)
     fill_bxbox(all_data)
+
+
+def clear_entry_fields():
+    e_car_make.delete(0, tk.END)
+    e_car_model.delete(0, tk.END)
+    e_car_price.delete(0, tk.END)
+    e_year.delete(0, tk.END)
 
 
 def save_record():
@@ -21,6 +30,7 @@ def save_record():
                   price=e_car_price.get(),
                   year=e_year.get())
     refresh_bxbox()
+    clear_entry_fields()
 
 
 win = tk.Tk()
