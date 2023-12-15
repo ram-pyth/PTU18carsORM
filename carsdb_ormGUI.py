@@ -1,5 +1,6 @@
 import tkinter as tk
 from carsdb_controller import session, select_all, create_record
+from tkinter import messagebox
 
 FONTS = ["Tenor Sans", "Consolas"]
 all_data = []
@@ -24,9 +25,14 @@ def clear_entry_fields():
 
 
 def save_record():
+    car_make = e_car_make.get().strip()
+    car_model = e_car_model.get().strip()
+    if len(car_make) < 2 or len(car_model) < 1:
+        messagebox.showerror("Make or model error", "Make or model were not entered")
+        return
     create_record(ses=session,
-                  make=e_car_make.get(),
-                  model=e_car_model.get(),
+                  make=car_make,
+                  model=car_model,
                   price=e_car_price.get(),
                   year=e_year.get())
     refresh_bxbox()
