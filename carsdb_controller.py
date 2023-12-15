@@ -21,4 +21,13 @@ def delete_record(ses, obj):
     ses.commit()
 
 
+def edit_record(ses, obj, make, model, price, year):
+    obj.car_make = make
+    obj.car_model = model
+    obj.car_price = price
+    obj.year = year
+    ses.commit()
+
+
+
 

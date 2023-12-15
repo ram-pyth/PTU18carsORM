@@ -1,9 +1,10 @@
 import tkinter as tk
-from carsdb_controller import session, select_all, create_record, delete_record
+from carsdb_controller import session, select_all, create_record, delete_record, edit_record
 from tkinter import messagebox
 
 FONTS = ["Tenor Sans", "Consolas"]
 all_data = []
+obj = None
 
 
 def fill_bxbox(data):
@@ -27,6 +28,22 @@ def on_delete():
     refresh_bxbox()
 
 
+def on_edit():
+    global obj
+    selection = bx_boxas.curselection()
+    if not selection:
+        messagebox.showerror("Nothing selected", "Please select row to edit")
+        return
+    index = selection[0]
+    clear_entry_fields()
+    obj = all_data[index]
+    e_car_make.insert(tk.END, obj.car_make)
+    e_car_model.insert(tk.END, obj.car_model)
+    e_car_price.insert(tk.END, obj.car_price)
+    e_year.insert(tk.END, obj.year)
+    b_delete["state"] = "disabled"
+
+
 def clear_entry_fields():
     e_car_make.delete(0, tk.END)
     e_car_model.delete(0, tk.END)
@@ -35,16 +52,27 @@ def clear_entry_fields():
 
 
 def save_record():
+    global obj
     car_make = e_car_make.get().strip()
     car_model = e_car_model.get().strip()
     if len(car_make) < 2 or len(car_model) < 1:
         messagebox.showerror("Make or model error", "Make or model were not entered")
         return
-    create_record(ses=session,
-                  make=car_make,
-                  model=car_model,
-                  price=e_car_price.get(),
-                  year=e_year.get())
+    if obj:
+        edit_record(session,
+                    obj,
+                    make=car_make,
+                    model=car_model,
+                    price=e_car_price.get(),
+                    year=e_year.get())
+        obj = None
+        b_delete["state"] = "normal"
+    else:
+        create_record(ses=session,
+                      make=car_make,
+                      model=car_model,
+                      price=e_car_price.get(),
+                      year=e_year.get())
     refresh_bxbox()
     clear_entry_fields()
 
@@ -57,6 +85,7 @@ fr_controls = tk.Frame(win)
 sc_scrollas = tk.Scrollbar(win)
 bx_boxas = tk.Listbox(win, yscrollcommand=sc_scrollas.set)
 sc_scrollas.config(command=bx_boxas.yview)
+bx_boxas.bind("<<ListboxSelect>>")
 
 l_search = tk.Label(fr_controls, text="cars")
 l_car_make = tk.Label(fr_controls, text="make")
@@ -68,7 +97,7 @@ e_car_price = tk.Entry(fr_controls)
 l_year = tk.Label(fr_controls, text="year")
 e_year = tk.Entry(fr_controls)
 b_save = tk.Button(fr_controls, text="SAVE", command=save_record, width=10)
-b_edit = tk.Button(fr_controls, text="EDIT")
+b_edit = tk.Button(fr_controls, text="EDIT", command=on_edit)
 b_delete = tk.Button(fr_controls, text="DELETE", command=on_delete)
 
 # bx_boxas.insert(tk.END, *select_all(c))
